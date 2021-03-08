@@ -1,4 +1,8 @@
 # Byte-compiled / optimized / DLL files
+
+*.yaml
+*oidc_rp_settings.py 
+
 __pycache__/
 *.py[cod]
 *$py.class
