@@ -5,39 +5,8 @@ BASE_DIR = Path(__file__).resolve().parent
 PORT = 8099
 BASE_URL = f'https://127.0.0.1:{PORT}'
 
+
 JWTCONN_OIDC_RP = {
-    # 'logging': 
-        # {'version': 1, 
-         # 'disable_existing_loggers': False, 
-         # 'root': {
-            # 'handlers': ['default', 'console'], 
-            # 'level': 'DEBUG'
-         # }, 
-         # 'loggers': {'idp': {'level': 'DEBUG'}}, 
-         # 'handlers': {'default': 
-                        # {'class': 'logging.FileHandler', 
-                         # 'filename': 'debug.log', 
-                         # 'formatter': 'default'
-                        # }, 
-                      # 'console': 
-                        # {'class': 'logging.StreamHandler', 
-                         # 'stream': 'ext://sys.stdout', 
-                         # 'formatter': 'default'}
-                     # }, 
-                      # 'formatters': 
-                        # {'default': 
-                            # {'format': '%(asctime)s %(name)s %(levelname)s %(message)s'}
-                        # }
-    # }, 
-    
-
-    # 'webserver': {
-            # 'port': '{port}', 
-            # 'server_cert': 'certs/cert.pem', 
-            # 'server_key': 'certs/key.pem', 
-            # 'domain': '{domain}'
-    # }, 
-
     'port': PORT, 
     'base_url': BASE_URL, 
             
@@ -140,7 +109,7 @@ JWTCONN_OIDC_RP = {
             'client_id': 'das6ftasd8f6as87f6as8976fas87d6fas', 
             'client_secret': 'sdf7sdf7sdf897sd9fsdfsd-sdfsdf', 
             'redirect_uris': [f'{BASE_URL}/rp/authz_cb/agid_login'], 
-            'issuer': 'https://login.agid.gov.it/', 
+            'issuer': 'https://that.provider.it/', 
             'services': {
                 'discovery': {
                     'class': 'oidcservice.oidc.provider_info_discovery.ProviderInfoDiscovery', 
