@@ -13,9 +13,17 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.conf import settings
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
+
+ADMIN_PATH = getattr(settings, 'ADMIN_PATH', 'admin')
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path(f'{ADMIN_PATH}/', admin.site.urls),
 ]
+
+if 'jwtconnect_oidc_rp' in settings.INSTALLED_APPS:
+    urlpatterns += path('', 
+                        include(('jwtconnect_oidc_rp.urls', 'rp'), namespace="jwtconnect_oidc_rp"), 
+                        name="jwtconnect_oidc_rp"),
