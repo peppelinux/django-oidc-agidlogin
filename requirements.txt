@@ -1,0 +1,3 @@
+django
+oidcmsg>=1.1.4
+cryptojwt==1.4.0
