@@ -10,7 +10,7 @@ import urllib
 
 
 from cryptojwt import KeyJar
-from cryptojwt.key_jar import init_key_jar
+from cryptojwt.key_jar import init_key_jar, KeyJar
 from django.conf import settings
 from oidcrp import RPHandler
 from oidcrp.util import load_yaml_config, load_configuration
@@ -105,3 +105,18 @@ def get_pkce(method='S256'):
         'code_challenge': code_challenge,
         'code_challenge_method': method
     }
+
+
+def get_issuer_keyjar(jwks, issuer:str):
+    key_jar = KeyJar()
+    # "" means default, you can always point to a issuer identifier
+    key_jar.import_jwks(jwks, issuer_id=issuer)
+    return key_jar
+
+
+def validate_jwt(jwt:str, key_jar):
+    try:
+        recv = Message().from_jwt(jwt, keyjar=key_jar)
+        return recv.verify(), key_jar
+    except:
+        return False
