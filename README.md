@@ -1,7 +1,7 @@
 # spid-django-oidc
 OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
 specifically built from scratch starting from [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
-and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/), as _slim_ as possibile.
+and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 
 ## Why
 
@@ -10,7 +10,7 @@ spid-django-oidc enables OIDC Authentication in your django app.
 To date there are many libraries that enable OAuth2 and OIDC in a Django project,
 however spid-django-oidc wants to offer itself as a simple alternative, compliant with
 standards and in line with what [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
-the guidelines defines.
+guidelines defines.
 
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
