@@ -6,6 +6,7 @@ from cryptojwt.exception import BadSyntax
 from cryptojwt.jwk.jwk import key_from_jwk_dict
 
 from django.conf import settings
+from django.contrib.auth import login, get_user_model
 from django.http import (HttpResponse,
                          HttpResponseBadRequest,
                          HttpResponseRedirect)
@@ -33,7 +34,10 @@ class AgidOidcRpBeginView(View):
     """
 
     def get_oidc_rp_issuer(self, request):
-
+        """
+            Disambiguation page if many clients have been confgiured
+            Work in progress
+        """
         available_issuers = settings.JWTCONN_RP_CLIENTS
         available_issuers_len = len(available_issuers)
 
@@ -52,6 +56,9 @@ class AgidOidcRpBeginView(View):
         return issuer_id, available_issuers[issuer_id]['issuer']
 
     def provider_discovery(self, client_conf):
+        """
+            Minimal Provider Discovery endpoint request processing
+        """
         oidc_op_wk_url = f"{client_conf['issuer']}/.well-known/openid-configuration"
         oidc_op_wk = requests.get(
             client_conf.get('discovery_url') or oidc_op_wk_url,
@@ -59,7 +66,10 @@ class AgidOidcRpBeginView(View):
         )
         return oidc_op_wk.json()
 
-    def get_jwks_from_jwks_uri(self, jwks_uri, verify=True):
+    def get_jwks_from_jwks_uri(self, jwks_uri, verify=True)->tuple:
+        """
+            builds jwks objects, importable in a Key Jar
+        """
         jwks_dict = requests.get(jwks_uri, verify=verify).json()
         return jwks_dict, [key_from_jwk_dict(i) for i in jwks_dict["keys"]]
 
@@ -94,31 +104,29 @@ class AgidOidcRpBeginView(View):
             endpoint=authz_endpoint
         )
 
+        # TODO: generalized addons loader
         has_pkce = client_conf.get('add_ons', {}).get('pkce')
         if has_pkce:
             pkce_func = import_string(has_pkce['function'])
             pkce_values = pkce_func(**has_pkce['kwargs'])
             authz_data.update(pkce_values)
 
-        uri_path = http_dict_to_redirect_uri_path(authz_data)
-        url = '?'.join((authz_endpoint, uri_path))
-
-        authz_data.pop('code_verifier')
         # create request in db
         authz_entry = dict(
-            client_id=client_conf['client_id'],
-            state=authz_data['state'],
-            endpoint=authz_endpoint,
-            authz_url=url,
-            issuer=issuer_fqdn,
-            issuer_id=issuer_id,
-            json=json.dumps(authz_data),
-            jwks=json.dumps(jwks_dict),
-            provider_configuration=json.dumps(provider_conf)
+            client_id = client_conf['client_id'],
+            state = authz_data['state'],
+            endpoint = authz_endpoint,
+            issuer = issuer_fqdn,
+            issuer_id = issuer_id,
+            json = json.dumps(authz_data),
+            jwks = json.dumps(jwks_dict),
+            provider_configuration = json.dumps(provider_conf)
         )
-        authz_entry.update(pkce_values)
         OidcAuthenticationRequest.objects.create(**authz_entry)
 
+        authz_data.pop('code_verifier')
+        uri_path = http_dict_to_redirect_uri_path(authz_data)
+        url = '?'.join((authz_endpoint, uri_path))
         data = http_redirect_uri_to_dict(url)
         logger.debug(f'Started Authz: {url}')
         logger.debug(f'data: {data}')
@@ -131,8 +139,38 @@ class AgidOidcRpCallbackView(View):
         /redirect_uri?code=tYkP854StRqBVcW4Kg4sQfEN5Qz&state=R9EVqaazGsj3wg5JgxIgm8e8U4BMvf7W
     """
 
-    def user_reunification(self, issuer_fqdn: str, userinfo: dict):
-        pass
+    def process_user_attributes(self,
+                                userinfo:dict,
+                                client_conf:dict,
+                                authz:OidcAuthenticationRequest):
+        user_map = client_conf['user_attributes_map']
+        data = dict()
+        for k,v in user_map.items():
+            if type(v) in (list, tuple):
+                for i in v:
+                    if i in userinfo:
+                        data[k] = userinfo[i]
+                        break
+            elif isinstance(v, dict):
+                args = (
+                    userinfo,
+                    client_conf,
+                    authz.__dict__,
+                    v['kwargs']
+                )
+                data[k] = import_string(v['func'])(*args)
+        return data
+
+    def user_reunification(self, user_attrs: dict, client_conf:dict):
+        user_model = get_user_model()
+        field_name = client_conf['user_lookup_field']
+        lookup = {field_name: user_attrs[field_name]}
+        user = user_model.objects.filter(**lookup)
+        if user:
+            return user.first()
+        elif client_conf.get('user_create'):
+            user = user_model.objects.create(**user_attrs)
+        return user
 
     def get_token_endpoint_auth_method(self,
                                        client_conf: dict,
@@ -155,7 +193,29 @@ class AgidOidcRpCallbackView(View):
             )
         return data
 
+    def token_request(self,
+                      authz:OidcAuthenticationRequest,
+                      token_endpoint_url:str,
+                      token_req_data:dict,
+                      verify=True):
+        token_request = requests.post(token_endpoint_url,
+                                      **token_req_data,
+                                      verify=verify)
+
+        if token_request.status_code != 200:
+            logger.error(
+                f'Something went wrong with {authz}: {token_request.content}')
+        else:
+            try:
+                token_request = json.loads(token_request.content.decode())
+                return token_request
+            except Exception as e:
+                logger.error(f'Something went wrong with {authz}: {e}')
+
     def get_userinfo(self, authz, authz_token, provider_conf, verify):
+        """
+            User Info endpoint request with bearer access token
+        """
         # userinfo
         headers = {'Authorization': f'Bearer {authz_token.access_token}'}
         authz_userinfo = requests.get(provider_conf['userinfo_endpoint'],
@@ -211,22 +271,23 @@ class AgidOidcRpCallbackView(View):
 
         authz_data = json.loads(authz.json)
         provider_conf = json.loads(authz.provider_configuration)
-        json.loads(authz.json)
 
         code = request.GET.get('code')
+        authz_token = OidcAuthenticationToken.objects.create(
+            authz_request=authz,
+            code=code
+        )
+
         grant_data = dict(
             grant_type='authorization_code',
             redirect_uri=authz_data['redirect_uri'],
             client_id=authz.client_id,
             state=authz.state,
             code=code,
-            code_verifier=authz.code_verifier
         )
 
-        authz_token = OidcAuthenticationToken.objects.create(
-            authz_request=authz,
-            code=code
-        )
+        if authz_data.get('code_verifier'):
+            grant_data.update({'code_verifier': authz_data['code_verifier']})
 
         issuer_id = authz.issuer_id
         client_conf = settings.JWTCONN_RP_CLIENTS[issuer_id]
@@ -236,23 +297,17 @@ class AgidOidcRpCallbackView(View):
             data=grant_data,
         )
         token_req_data.update(auth_data)
-        token_request = requests.post(provider_conf['token_endpoint'],
-                                      **token_req_data)
+        token_request = self.token_request(
+                    authz,
+                    provider_conf['token_endpoint'],
+                    token_req_data,
+                    verify=client_conf['httpc_params']['verify']
+        )
 
-        if token_request.status_code != 200:
-            logger.error(
-                f'Something went wrong with {authz}: {token_request.content}')
+        if not token_request:
             return HttpResponseBadRequest(
-                _('Code Authentication failed, please renew your session')
+                _('Authentication token seems not to be valid.')
             )
-        else:
-            try:
-                token_request = json.loads(token_request.content.decode())
-            except Exception as e:
-                logger.error(f'Something went wrong with {authz}: {e}')
-                return HttpResponseBadRequest(
-                    _('Authentication response seems not to be valid.')
-                )
 
         jwks = json.loads(authz.jwks)
         keyjar = get_issuer_keyjar(jwks, authz.issuer)
@@ -265,7 +320,7 @@ class AgidOidcRpCallbackView(View):
             # )
         if not self.validate_jwt(authz, token_request['id_token'], keyjar):
             return HttpResponseBadRequest(
-                _('Authentication response validation error.')
+                _('Authentication token validation error.')
             )
 
         # just for debugging purpose ...
@@ -292,5 +347,11 @@ class AgidOidcRpCallbackView(View):
             )
 
         # here django user attr mapping
-        self.user_reunification(authz.issuer, userinfo)
-        return HttpResponse('OK')
+        user_attrs = self.process_user_attributes(
+                        userinfo, client_conf, authz
+                    )
+        user = self.user_reunification(user_attrs, client_conf)
+        login(request, user)
+        return HttpResponseRedirect(
+            getattr(settings, 'LOGIN_REDIRECT_URL', '/')
+        )

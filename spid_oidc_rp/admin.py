@@ -16,7 +16,14 @@ class OidcAuthenticationTokenInline(admin.TabularInline):
     model = OidcAuthenticationToken
     extra = 0
     max_num = 1
-
+    readonly_fields = ('code', 'access_token', 'id_token')
+    fieldsets = (
+        (None,
+            {
+                'fields': ('code', 'access_token', 'id_token')
+            }
+         ),
+    )
 
 @admin.register(OidcAuthenticationRequest)
 class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
@@ -28,12 +35,8 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
                        'client_id',
                        'state',
                        'endpoint',
-                       'code_verifier',
-                       'code_challenge',
-                       'code_challenge_method',
                        'successful',
                        'json_preview',
-                       'authz_url',
                        'jwks_preview',
                        'provider_configuration_preview',
                        'created',
@@ -46,10 +49,7 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
                     'issuer',
                     'client_id',
                     'state',
-                    'endpoint',
-                    'code_verifier',
-                    'code_challenge',
-                    'code_challenge_method',
+                    'endpoint'
                 )
             }
          ),
@@ -62,14 +62,18 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
                 )
             }
          ),
-        ('Previews',
+        ('Authorization request previews',
             {
                 'fields': (
                     'json_preview',
-                    'authz_url',
                     'jwks_preview',
-                    'provider_configuration_preview',
                 ),
+                'classes': ('collapse',),
+            }
+         ),
+        ('Provider Discovery result',
+            {
+                'fields': ('provider_configuration_preview',),
                 'classes': ('collapse',),
             }
          )
