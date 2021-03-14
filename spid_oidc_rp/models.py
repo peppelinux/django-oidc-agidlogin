@@ -1,20 +1,19 @@
 from django.db import models
 
 
-
 class OidcAuthenticationRequest(models.Model):
     client_id = models.CharField(max_length=256)
     state = models.CharField(max_length=256,
                              unique=True, default='state-is-unique')
     endpoint = models.URLField(blank=True, null=True)
     issuer = models.CharField(max_length=256, blank=True, null=True)
-    issuer_id =  models.CharField(max_length=256, blank=True, null=True)
+    issuer_id = models.CharField(max_length=256, blank=True, null=True)
     code_challenge = models.CharField(
-                                max_length=256, blank=True, null=True)
+        max_length=256, blank=True, null=True)
     code_challenge_method = models.CharField(
-                                        max_length=256, blank=True, null=True)
+        max_length=256, blank=True, null=True)
     code_verifier = models.CharField(
-                                max_length=256, blank=True, null=True)
+        max_length=256, blank=True, null=True)
     authz_url = models.URLField(blank=True, null=True)
     jwks = models.TextField(blank=True, null=True)
     json = models.TextField(blank=True, null=True)
@@ -30,7 +29,7 @@ class OidcAuthenticationRequest(models.Model):
 
 class OidcAuthenticationToken(models.Model):
     authz_request = models.ForeignKey(OidcAuthenticationRequest,
-                                      on_delete = models.CASCADE)
+                                      on_delete=models.CASCADE)
     code = models.CharField(max_length=256, blank=True, null=True)
     access_token = models.TextField(blank=True, null=True)
     id_token = models.TextField(blank=True, null=True)

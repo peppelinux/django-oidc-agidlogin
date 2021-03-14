@@ -1,2 +1,3 @@
 django
-git+https://github.com/IdentityPython/JWTConnect-Python-OidcRP.git
+oidcmsg>=1.1.4
+cryptojwt==1.4.0

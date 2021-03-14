@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
-from . oidc_rp_settings import JWTCONN_RP_CONF, JWTCONN_RP_CLIENTS
+from . spid_oidc_rp_settings import JWTCONN_RP_CLIENTS
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'jwtconnect_oidc_rp'
+    'spid_oidc_rp'
 ]
 
 MIDDLEWARE = [
@@ -161,17 +161,12 @@ LOGGING = {
             'level': 'ERROR',
             'propagate': True,
         },
-        'oidcrp': {
-            'handlers': ['console'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
         # 'oidcmsg.storage.extension': {
             # 'handlers': ['console'],
             # 'level': 'DEBUG',
             # 'propagate': True,
         # },
-        'jwtconnect_oidc_rp': {
+        'spid_oidc_rp': {
             'handlers': ['console'],
             'level': 'DEBUG',
             'propagate': True,

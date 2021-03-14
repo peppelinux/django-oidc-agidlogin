@@ -23,7 +23,7 @@ urlpatterns = [
     path(f'{ADMIN_PATH}/', admin.site.urls),
 ]
 
-if 'jwtconnect_oidc_rp' in settings.INSTALLED_APPS:
-    urlpatterns += path('', 
-                        include(('jwtconnect_oidc_rp.urls', 'rp'), namespace="jwtconnect_oidc_rp"), 
-                        name="jwtconnect_oidc_rp"),
+if 'spid_oidc_rp' in settings.INSTALLED_APPS:
+    urlpatterns += path('',
+                        include(('spid_oidc_rp.urls', 'rp'), namespace="spid_oidc_rp"),
+                        name="spid_oidc_rp"),

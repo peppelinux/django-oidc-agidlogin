@@ -42,49 +42,46 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
     fieldsets = (
         (None,
             {
-                'fields':(
-                            'issuer',
-                            'client_id',
-                            'state',
-                            'endpoint',
-                            'code_verifier',
-                            'code_challenge',
-                            'code_challenge_method',
-                        )
+                'fields': (
+                    'issuer',
+                    'client_id',
+                    'state',
+                    'endpoint',
+                    'code_verifier',
+                    'code_challenge',
+                    'code_challenge_method',
+                )
             }
-        ),
+         ),
         ('Status',
             {
-                'fields':(
-                            'successful',
-                            'created',
-                            'modified',
-                         )
+                'fields': (
+                    'successful',
+                    'created',
+                    'modified',
+                )
             }
-        ),
+         ),
         ('Previews',
             {
-                'fields':(
-                            'json_preview',
-                            'authz_url',
-                            'jwks_preview',
-                            'provider_configuration_preview',
-                        ),
-                'classes':('collapse',),
+                'fields': (
+                    'json_preview',
+                    'authz_url',
+                    'jwks_preview',
+                    'provider_configuration_preview',
+                ),
+                'classes': ('collapse',),
             }
-        )
+         )
     )
-
 
     def json_preview(self, obj):
         return html_json_preview(obj.json)
     json_preview.short_description = 'Authentication Request data'
 
-
     def provider_configuration_preview(self, obj):
         return html_json_preview(obj.provider_configuration)
     provider_configuration_preview.short_description = 'provider configuration'
-
 
     def jwks_preview(self, obj):
         return html_json_preview(obj.jwks)
