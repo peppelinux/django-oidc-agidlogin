@@ -30,12 +30,6 @@ cd spid-django-oidc
 pip install virtualenv
 virtualenv -ppython3 env
 source env/bin/activate
-
-pip install -r requirements.txt
-cd example
-./manage.py migrate
-./manage.py createsuperuser
-./manage.py runserver
 ````
 
 Before run, create a file called `example/spid_oidc_rp_settings_private.py` with your client credentials and configurations, as follows:
@@ -62,6 +56,15 @@ JWTCONN_RP_CLIENTS = {
 }
 ````
 
+Then start the demo server
+````
+pip install -r requirements.txt
+cd example
+./manage.py migrate
+./manage.py createsuperuser
+./manage.py runserver
+````
+
 ## Installation
 
 
@@ -70,10 +73,12 @@ pip install spid-django-oidc
 ````
 
 then adapt your project setting file as shown in `example/` project.
+import `spid_oidc_rp.urls` in your project `urls.py` file.
 A Documentation with all the parameters will come soon!
 
 
 ## Authors
+
  - Giuseppe De Marco
 
 
