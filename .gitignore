@@ -1,8 +1,7 @@
 # Byte-compiled / optimized / DLL files
 
-spid_oidc_rp_settings_private.py
+*_oidc_rp_settings_private.py
 *.yaml
-*oidc_rp_settings.py
 
 __pycache__/
 *.py[cod]
