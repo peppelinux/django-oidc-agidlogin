@@ -1,5 +1,7 @@
 # spid-django-oidc
-OIDC Relying Party (RP) or Oauth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/).
+OIDC Relying Party (RP) or Oauth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
+specifically built from scratch starting from [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
+and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/), as _slim_ as possibile.
 
 ## Why
 
@@ -17,10 +19,21 @@ In the event that some other functionality is required, this one relating to spe
 
 ## Features
 
- - Discovery Provider: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery)
+Regarding Oauth2
+
  - OAuth2/OIDC Authorization Code Grant: [rfc6749](https://tools.ietf.org/html/rfc6749#section-4.1) and [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
- - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
  - PKCE: [rfc7636](https://tools.ietf.org/html/rfc7636)
+
+Regarding OIDC
+
+ - Discovery Provider: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery)
+ - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
+
+Regarding django user management
+
+ - user attributes processing and rewriting from OAuth2 claims
+ - reunification of digital identities
+
 
 ## Example project
 
