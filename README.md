@@ -1,5 +1,5 @@
 # spid-django-oidc
-OIDC Relying Party (RP) or Oauth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
+OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
 specifically built from scratch starting from [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
 and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/), as _slim_ as possibile.
 
