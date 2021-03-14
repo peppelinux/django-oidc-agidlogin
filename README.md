@@ -55,7 +55,7 @@ JWTCONN_RP_CLIENTS = {
 }
 ````
 
-## Install in you Django project
+## Installation
 
 
 ````
@@ -68,3 +68,11 @@ A Documentation with all the parameters will come soon!
 
 ## Authors
  - Giuseppe De Marco
+
+
+## Special thanks to
+
+ - Mirko Cappuccia, for having motivated the birth of this project
+ - Michele D'Amico, for the support and willingness to welcome opinions, ideas and contributions
+ - Francesco Filicetti, for the excellent uniTicket which is the platform thanks to which all this began
+ - Roland Hedberg, for being the author of jwtconnect.io, for being open, available and intellectually active
