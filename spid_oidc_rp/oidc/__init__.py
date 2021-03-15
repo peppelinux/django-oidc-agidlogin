@@ -12,7 +12,7 @@ class OidcProviderDiscovery(object):
     """
         https://openid.net/specs/openid-connect-core-1_0.html#SelfIssued
     """
-    def provider_discovery(self, client_conf):
+    def provider_discovery(self, client_conf:dict):
         """
             Minimal Provider Discovery endpoint request processing
         """
@@ -35,7 +35,11 @@ class OidcUserInfo(object):
     """
         https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
     """
-    def get_userinfo(self, state, access_token, provider_conf, verify):
+    def get_userinfo(self,
+                     state:str,
+                     access_token:str,
+                     provider_conf:dict,
+                     verify:bool):
         """
             User Info endpoint request with bearer access token
         """

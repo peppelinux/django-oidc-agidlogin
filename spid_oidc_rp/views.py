@@ -66,6 +66,12 @@ class AgidOidcRpBeginView(View, OidcProviderDiscovery):
 
         try:
             provider_conf = self.provider_discovery(client_conf)
+        except Exception as e:
+            _msg = f'Failed to get provider discovery from {issuer_fqdn}'
+            logger.error(f'{_msg}: {e}')
+            return HttpResponseBadRequest(_(_msg))
+
+        try:
             jwks_dict, jwks = self.get_jwks_from_jwks_uri(
                 provider_conf['jwks_uri'],
                 verify=client_conf['httpc_params']['verify']
