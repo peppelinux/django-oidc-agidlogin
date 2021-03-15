@@ -1,7 +1,7 @@
 # spid-django-oidc
-OIDC Relying Party (RP) or Oauth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
-specifically built from scratch starting from [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
-and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/), as _slim_ as possibile.
+OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
+specifically built from scratch with [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
+and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 
 ## Why
 
@@ -9,8 +9,8 @@ spid-django-oidc enables OIDC Authentication in your django app.
 
 To date there are many libraries that enable OAuth2 and OIDC in a Django project,
 however spid-django-oidc wants to offer itself as a simple alternative, compliant with
-standards and in line with what [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
-the guidelines defines.
+standards and in line with what defined in [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
+guidelines.
 
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
@@ -19,13 +19,14 @@ In the event that some other functionality is required, this one relating to spe
 
 ## Features
 
-Regarding Oauth2
+Regarding OAuth2
 
- - OAuth2/OIDC Authorization Code Grant: [rfc6749](https://tools.ietf.org/html/rfc6749#section-4.1) and [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
+ - Authorization Code Grant: [rfc6749](https://tools.ietf.org/html/rfc6749#section-4.1)
  - PKCE: [rfc7636](https://tools.ietf.org/html/rfc7636)
 
 Regarding OIDC
 
+ - CodeFlowAuth: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
  - Discovery Provider: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery)
  - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
 
