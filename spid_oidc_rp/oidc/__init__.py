@@ -21,7 +21,11 @@ class OidcProviderDiscovery(object):
             client_conf.get('discovery_url') or oidc_op_wk_url,
             verify=client_conf['httpc_params']['verify']
         )
-        return oidc_op_wk.json()
+
+        if oidc_op_wk.status_code == 200:
+            return oidc_op_wk.json()
+        else:
+            raise Exception(f'Provider Discovery returns {oidc_op_wk.status_code}')
 
     def get_jwks_from_jwks_uri(self, jwks_uri, verify=True)->tuple:
         """

@@ -30,13 +30,14 @@ JWTCONN_PKCE_CONF = {
 
 
 JWTCONN_RP_CLIENTS = {
-        'agid_login_local': {
-            'issuer': 'https://login.agid.gov.it',
+        'op_test': {
+            'issuer': 'http://localhost:8888',
+            'discovery_url': 'http://localhost:8888/oidc/op/openid-configuration',
             'client_preferences': JWTCONN_RP_PREFS,
             'client_id': 'that-id',
             'client_secret': 'that-secret',
             'redirect_uris': ['http://localhost:8888/callback'],
-            'httpc_params':  {'verify': True},
+            'httpc_params':  {'verify': False},
             'add_ons': {
                 'pkce': JWTCONN_PKCE_CONF
             },

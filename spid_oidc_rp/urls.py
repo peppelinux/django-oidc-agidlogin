@@ -4,7 +4,7 @@ from . views import (AgidOidcRpBeginView,
                      AgidOidcRpCallbackEchoAttributes,
                      AgidOidcRpCallbackView)
 
-
+app_name = "spid_oidc_rp"
 urlpatterns = []
 urlpatterns += path('oidc/spid/begin',
                     AgidOidcRpBeginView.as_view(),

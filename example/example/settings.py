@@ -12,10 +12,13 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 
+from . spid_oidc_rp_settings import JWTCONN_RP_CLIENTS
+
 try:
-    from . spid_oidc_rp_settings_private import JWTCONN_RP_CLIENTS
+    from . spid_oidc_rp_settings_private import JWTCONN_RP_CLIENTS as JWTCONN_RP_CLIENTS_UPDATE
+    JWTCONN_RP_CLIENTS.update(JWTCONN_RP_CLIENTS_UPDATE)
 except:
-    from . spid_oidc_rp_settings import JWTCONN_RP_CLIENTS
+    pass
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -44,7 +47,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'spid_oidc_rp'
+    'spid_oidc_rp',
+    'op_test', # only for test purpose
 ]
 
 MIDDLEWARE = [

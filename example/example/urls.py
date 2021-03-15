@@ -30,5 +30,10 @@ urlpatterns = [
 
 if 'spid_oidc_rp' in settings.INSTALLED_APPS:
     urlpatterns += path('',
-                        include(('spid_oidc_rp.urls', 'rp'), namespace="spid_oidc_rp"),
+                        include(('spid_oidc_rp.urls', 'spid_oidc_rp'), namespace="spid_oidc_rp"),
                         name="spid_oidc_rp"),
+
+if 'op_test' in settings.INSTALLED_APPS:
+    urlpatterns += path('',
+                        include(('op_test.urls', 'op_test'), namespace="op_test"),
+                        name="op_test"),
