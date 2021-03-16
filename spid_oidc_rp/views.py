@@ -170,9 +170,10 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         field_name = client_conf['user_lookup_field']
         lookup = {field_name: user_attrs[field_name]}
         user = user_model.objects.filter(**lookup)
-        if user:
+        if user: # pragma: no cover
+            user = user.first()
             logger.info(f'{field_name} matched on user {user}')
-            return user.first()
+            return user
         elif client_conf.get('user_create'):
             user = user_model.objects.create(**user_attrs)
             logger.info(f'Created new user {user}')
@@ -306,4 +307,5 @@ def oidc_rpinitiated_logout(request):
         auth_token = auth_tokens.last()
         url = f'{end_session_url}?id_token_hint={auth_token.id_token}'
         auth_token.logged_out = timezone.localtime()
+        auth_token.save()
         return HttpResponseRedirect(url)
