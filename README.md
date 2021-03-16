@@ -81,7 +81,6 @@ cd example
 
 ## Installation
 
-
 ````
 pip install spid-django-oidc
 ````
@@ -89,6 +88,24 @@ pip install spid-django-oidc
 then adapt your project setting file as shown in `example/` project.
 import `spid_oidc_rp.urls` in your project `urls.py` file.
 A Documentation with all the parameters will come soon!
+
+## Tests
+
+Tests needs that a debug server have to be executed, this is for simulate the entire auth code flow as it's real.
+spid-django-oidc have an application called `op_test` that's involved in testing.
+
+So, first of all execute the test server as follow
+````
+./manage.py runserver 0.0.0.0:8888
+````
+
+Then run the tests in a separate shell with `./manage.py test`.
+
+Code Coverage
+````
+pip install coverage
+coverage erase; coverage run ./manage.py test ; coverage report -m
+````
 
 
 ## Authors
