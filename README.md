@@ -14,14 +14,14 @@ and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 spid-django-oidc enables OIDC Authentication in your django project.
 
 To date there are many libraries that enable OAuth2 and OIDC in a Django project,
-spid-django-oidc wants to offer itself as a simple alternative, compliant with
+this project instead born to be lightweight and simple, compliant with
 standards and in line with what defined in [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
 guidelines.
 
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
 
-In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue, it will be possible to integrate them as soon as possibile.
+In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue to integrate them as soon as possibile.
 
 ## Features
 
@@ -42,6 +42,16 @@ Regarding django user management
  - reunification of digital identities
 
 
+## Installation
+
+````
+pip install spid-django-oidc
+````
+
+then adapt your project setting file as shown in `example/` project.
+import `spid_oidc_rp.urls` in your project `urls.py` file.
+
+
 ## Example project
 
 ````
@@ -50,6 +60,7 @@ cd spid-django-oidc
 pip install virtualenv
 virtualenv -ppython3 env
 source env/bin/activate
+python setup.py install
 ````
 
 Before run, create a file called `example/spid_oidc_rp_settings_private.py` with your client credentials and configurations, as follows:
@@ -82,18 +93,34 @@ pip install -r requirements.txt
 cd example
 ./manage.py migrate
 ./manage.py createsuperuser
-./manage.py runserver
+./manage.py runserver 0.0.0.0:8888
 ````
 
-## Installation
+## Settings
 
-````
-pip install spid-django-oidc
-````
+Please see `example/example/spid_oidc_rp_settings.py` as example.
 
-then adapt your project setting file as shown in `example/` project.
-import `spid_oidc_rp.urls` in your project `urls.py` file.
-A Documentation with all the parameters will come soon!
+- `JWTCONN_RP_PREFS`: General information about the RP, default parameters in authz requests like `scope`
+- `JWTCONN_RP_CLIENTS`: All the Clients configured,
+    - `discovery_url`: only usefull if the provider/as doesn't have a standard .`well-known` discovery path
+    - `redirect_uris`: this must match with the `spid_oidc_rp_callback` url defined in your project `urls.py`
+    - `httpc_params`: check if the provider have a valid https certificate
+    - `add_ons.pkce`: enable PKCE (rfc7636)
+    - `user_attributes_map`:defines how the claims should be mapped the django project User model. you can use a function to do rewrite or create new attributes (feel free to contribute with new processors!)
+        ````
+        {
+            'func': 'spid_oidc_rp.processors.issuer_prefixed_sub',
+            'kwargs': {'sep': '__'}
+        },
+        ````
+        Otherwise a simple mapping like this: `('firstname',),`
+        Otherwise a multiple OR sequence: `('firstname', 'lastname'),`. This will check for the first occourrence
+
+    - `user_lookup_field`: the django user field where the reunification lookup will use, `('username'),`
+    - `user_create`: creates a new user if the reunification lookup fails
+    - `login_redirect_url`: where the user will be redirected when it's finally authenticated
+- `JWTCONN_PKCE_CONF`: function and paramenters to PKCE creation
+
 
 ## Tests
 
