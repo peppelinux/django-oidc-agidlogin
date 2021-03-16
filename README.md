@@ -11,17 +11,17 @@ and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 
 ## Why
 
-spid-django-oidc enables OIDC Authentication in your django app.
+spid-django-oidc enables OIDC Authentication in your django project.
 
 To date there are many libraries that enable OAuth2 and OIDC in a Django project,
-however spid-django-oidc wants to offer itself as a simple alternative, compliant with
+spid-django-oidc wants to offer itself as a simple alternative, compliant with
 standards and in line with what defined in [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
 guidelines.
 
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
 
-In the event that some other functionality is required, this one relating to specific RFCs and draft of these, it will be possible to integrate them.
+In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue, it will be possible to integrate them as soon as possibile.
 
 ## Features
 
