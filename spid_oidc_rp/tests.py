@@ -7,6 +7,14 @@ from . utils import html_json_preview
 
 class OidcRpTest(TestCase):
 
+    def test_stupid_logout(self):
+        # a stupid logout that MUST fail
+        url = f'{reverse("spid_oidc_rp:spid_oidc_rpinitiated_logout")}'
+        req = Client()
+        res = req.get(url)
+        self.assertTrue(res.status_code == 302)
+        # end stupid logout test
+
     def test_session(self):
         url = f'{reverse("spid_oidc_rp:spid_oidc_rp_begin")}?issuer_id=op_test'
         req = Client()
@@ -37,6 +45,10 @@ class OidcRpTest(TestCase):
 
         tokens.id_token_preview
 
+        # and now logout
+        url = f'{reverse("spid_oidc_rp:spid_oidc_rpinitiated_logout")}'
+        res = req.get(url)
+        self.assertTrue(res.status_code == 302)
 
     def test_html_json_preview(self):
         html_json_preview('{"a" : 34, "b" : 78}')

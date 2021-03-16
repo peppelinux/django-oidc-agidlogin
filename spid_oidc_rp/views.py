@@ -3,13 +3,16 @@ import logging
 import requests
 
 from django.conf import settings
-from django.contrib.auth import login, get_user_model
+from django.contrib.auth import login, logout, get_user_model
+from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.http import (HttpResponse,
                          HttpResponseBadRequest,
                          HttpResponseRedirect)
 from django.views import View
 from django.shortcuts import render
+from django.utils import timezone
 from django.utils.module_loading import import_string
 from django.utils.translation import gettext as _
 
@@ -189,7 +192,7 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
             authz = authz.last()
 
         authz_data = json.loads(authz.data)
-        provider_conf = json.loads(authz.provider_configuration)
+        provider_conf = authz.get_provider_configuration()
         client_conf = settings.JWTCONN_RP_CLIENTS[authz.issuer_id]
 
         code = request.GET.get('code')
@@ -258,8 +261,12 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         if not user:
             raise PermissionDenied()
 
+        # authenticate the user
         login(request, user)
         request.session['oidc_rp_user_attrs'] = user_attrs
+        authz_token.user = user
+        authz_token.save()
+
         return HttpResponseRedirect(
             client_conf.get('login_redirect_url') or \
             getattr(settings, 'LOGIN_REDIRECT_URL')
@@ -272,3 +279,31 @@ class AgidOidcRpCallbackEchoAttributes(View):
             'oidc_rp_user_attrs': request.session['oidc_rp_user_attrs']
         }
         return render(request, 'echo_attributes.html', data)
+
+
+@login_required
+def oidc_rpinitiated_logout(request):
+    """
+        http://localhost:8000/end-session/?id_token_hint=
+    """
+    auth_tokens = OidcAuthenticationToken.objects.filter(
+                    user=request.user
+                    ).filter(
+                            Q(logged_out__iexact = '') |
+                            Q(logged_out__isnull = True)
+                        )
+    authz = auth_tokens.last().authz_request
+    provider_conf = authz.get_provider_configuration()
+    end_session_url = provider_conf.get('end_session_endpoint')
+
+    # first of all on RP side ...
+    logout(request)
+
+    if not end_session_url:
+        logger.warning(f'{authz.issuer_url} does not support end_session_endpoint !')
+        return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+    else:
+        auth_token = auth_tokens.last()
+        url = f'{end_session_url}?id_token_hint={auth_token.id_token}'
+        auth_token.logged_out = timezone.localtime()
+        return HttpResponseRedirect(url)

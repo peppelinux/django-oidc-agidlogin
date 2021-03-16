@@ -5,11 +5,18 @@
 [![codecov](https://codecov.io/gh/peppelinux/spid-django-oidc/branch/main/graph/badge.svg)](https://codecov.io/gh/peppelinux/spid-django-oidc)
 ![License](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
 
-OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
+OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.
+It enables Clients to verify the identity of the End-User based on the authentication
+performed by an Authorization Server, as well as to obtain basic profile information
+about the End-User in an interoperable and REST-like manner.
+
+
+This project is a OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
 specifically built from scratch with [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
 and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 
-## Why
+
+## Introduction
 
 spid-django-oidc enables OIDC Authentication in your django project.
 
@@ -21,7 +28,6 @@ guidelines.
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
 
-In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue to integrate them as soon as possibile.
 
 ## Features
 
@@ -35,6 +41,7 @@ Regarding OIDC
  - CodeFlowAuth: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth)
  - Discovery Provider: [openid-connect-core-1_0](https://openid.net/specs/openid-connect-core-1_0.html#SelfIssuedDiscovery)
  - UserInfo endpoint: [UserInfo](https://openid.net/specs/openid-connect-core-1_0.html#UserInfo)
+ - RP Initiated logout: [openid-connect-rpinitiated-1_0](https://openid.net/specs/openid-connect-rpinitiated-1_0.html)
 
 Regarding django user management
 
@@ -149,6 +156,11 @@ pip install coverage
 coverage erase; coverage run ./manage.py test ; coverage report -m
 ````
 
+## Contribute
+
+In the event that some other functionality is required, relating to specific RFCs and draft of these, please open an issue to integrate them as soon as possibile.
+
+Your contribution is welcome, please open your Pull Requests on the dev branch.
 
 ## Authors
 

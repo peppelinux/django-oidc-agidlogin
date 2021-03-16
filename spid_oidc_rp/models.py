@@ -1,6 +1,7 @@
 import json
 import logging
 
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.utils.safestring import mark_safe
 
@@ -27,6 +28,11 @@ class OidcAuthenticationRequest(models.Model):
     def __str__(self):
         return f'{self.client_id} {self.state} to {self.endpoint}'
 
+
+    def get_provider_configuration(self):
+        return json.loads(self.provider_configuration)
+
+
     def get_provider_keyjar(self):
         jwks = json.loads(self.provider_jwks)
         keyjar = get_issuer_keyjar(jwks, self.issuer)
@@ -34,6 +40,9 @@ class OidcAuthenticationRequest(models.Model):
 
 
 class OidcAuthenticationToken(models.Model):
+    user = models.ForeignKey(get_user_model(),
+                             on_delete=models.SET_NULL,
+                             blank=True, null=True)
     authz_request = models.ForeignKey(OidcAuthenticationRequest,
                                       on_delete=models.CASCADE)
     code = models.CharField(max_length=255, blank=True, null=True)
@@ -46,6 +55,7 @@ class OidcAuthenticationToken(models.Model):
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
+    logged_out = models.DateTimeField(blank=True, null=True)
 
     def __str__(self):
         return f'{self.authz_request} {self.code}'
