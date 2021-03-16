@@ -2,17 +2,11 @@ import json
 import logging
 
 from django.contrib import admin
-from django.utils.safestring import mark_safe
 
 from . models import OidcAuthenticationRequest, OidcAuthenticationToken
+from . utils import html_json_preview
 
 logger = logging.getLogger(__name__)
-
-
-def html_json_preview(value):
-    msg = json.loads(value or '{}')
-    dumps = json.dumps(msg, indent=2)
-    return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
 
 
 class OidcAuthenticationTokenInline(admin.StackedInline):

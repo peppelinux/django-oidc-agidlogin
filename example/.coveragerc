@@ -8,4 +8,4 @@ omit =
     */migrations/*
     */site-packages/*
     */tests.py
-    */templates/admin.py
+    *op_test/*

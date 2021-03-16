@@ -66,7 +66,7 @@ class AgidOidcRpBeginView(View, OidcProviderDiscovery):
 
         try:
             provider_conf = self.provider_discovery(client_conf)
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             _msg = f'Failed to get provider discovery from {issuer_fqdn}'
             logger.error(f'{_msg}: {e}')
             return HttpResponseBadRequest(_(_msg))
@@ -76,7 +76,7 @@ class AgidOidcRpBeginView(View, OidcProviderDiscovery):
                 provider_conf['jwks_uri'],
                 verify=client_conf['httpc_params']['verify']
             )
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             _msg = f'Failed to get jwks from {issuer_fqdn}'
             logger.error(f'{_msg}: {e}')
             return HttpResponseBadRequest(_(_msg))
@@ -107,8 +107,8 @@ class AgidOidcRpBeginView(View, OidcProviderDiscovery):
             endpoint = authz_endpoint,
             issuer = issuer_fqdn,
             issuer_id = issuer_id,
-            json = json.dumps(authz_data),
-            jwks = json.dumps(jwks_dict),
+            data = json.dumps(authz_data),
+            provider_jwks = json.dumps(jwks_dict),
             provider_configuration = json.dumps(provider_conf)
         )
         OidcAuthenticationRequest.objects.create(**authz_entry)
@@ -181,7 +181,7 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         else:
             authz = authz.last()
 
-        authz_data = json.loads(authz.json)
+        authz_data = json.loads(authz.data)
         provider_conf = json.loads(authz.provider_configuration)
         client_conf = settings.JWTCONN_RP_CLIENTS[authz.issuer_id]
 

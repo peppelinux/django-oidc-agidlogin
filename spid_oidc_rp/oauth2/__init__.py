@@ -79,6 +79,6 @@ class OAuth2AuthorizationCodeGrant(object):
             try:
                 token_request = json.loads(token_request.content.decode())
                 return token_request
-            except Exception as e:
+            except Exception as e: # pragma: no cover
                 logger.error(f'Something went wrong with {state}: {e}')
         return token_request

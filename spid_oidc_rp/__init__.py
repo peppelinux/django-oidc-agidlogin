@@ -28,5 +28,5 @@ class OAuth2BaseView(object):
             logger.warning(
                 f"{name} from {authz.issuer} is not in JWT format: {jwt}"
             )
-        except Exception as e:
+        except Exception as e: # pragma: no cover
             logger.error(f"Something went wrong decoding {name}: {e}")

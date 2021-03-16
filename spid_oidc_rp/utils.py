@@ -11,6 +11,7 @@ import urllib
 
 from cryptojwt import KeyJar
 from cryptojwt.key_jar import KeyJar
+from django.utils.safestring import mark_safe
 from oidcmsg.message import Message
 
 
@@ -26,10 +27,6 @@ def http_redirect_uri_to_dict(url):
 
 def http_dict_to_redirect_uri_path(data):
     return urllib.parse.urlencode(data)
-
-
-def fancy_print(msg, dict_obj):
-    print('{}'.format(msg), json.dumps(dict_obj, indent=2) if dict_obj else '')
 
 
 def decode_token(bearer_token, keyjar, verify_sign=True):
@@ -79,3 +76,9 @@ def validate_jwt(jwt: str, key_jar):
         return recv.verify(), key_jar
     except:
         return False
+
+
+def html_json_preview(value):
+    msg = json.loads(value or '{}')
+    dumps = json.dumps(msg, indent=2)
+    return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))

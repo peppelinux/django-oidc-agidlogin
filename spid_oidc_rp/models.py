@@ -16,8 +16,8 @@ class OidcAuthenticationRequest(models.Model):
     endpoint = models.URLField(blank=True, null=True)
     issuer = models.CharField(max_length=256, blank=True, null=True)
     issuer_id = models.CharField(max_length=256, blank=True, null=True)
-    jwks = models.TextField(blank=True, null=True)
-    json = models.TextField(blank=True, null=True)
+    provider_jwks = models.TextField(blank=True, null=True)
+    data = models.TextField(blank=True, null=True)
     successful = models.BooleanField(default=False)
     provider_configuration = models.TextField(blank=True, null=True)
 
@@ -28,7 +28,7 @@ class OidcAuthenticationRequest(models.Model):
         return f'{self.client_id} {self.state} to {self.endpoint}'
 
     def get_provider_keyjar(self):
-        jwks = json.loads(self.jwks)
+        jwks = json.loads(self.provider_jwks)
         keyjar = get_issuer_keyjar(jwks, self.issuer)
         return keyjar
 
@@ -50,22 +50,19 @@ class OidcAuthenticationToken(models.Model):
     def __str__(self):
         return f'{self.authz_request} {self.code}'
 
-    @property
-    def access_token_preview(self):
+    def token_preview(self, token):
         keyjar = self.authz_request.get_provider_keyjar()
         try:
-            msg = decode_token(self.access_token, keyjar)
+            msg = decode_token(token, keyjar)
             dumps = json.dumps(msg, indent=2)
             return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
         except Exception as e:
-            logger.tracelog(e)
+            logger.error(e)
+
+    @property
+    def access_token_preview(self):
+        return self.token_preview(self.access_token)
 
     @property
     def id_token_preview(self):
-        keyjar = self.authz_request.get_provider_keyjar()
-        try:
-            msg = decode_token(self.id_token, keyjar)
-            dumps = json.dumps(msg, indent=2)
-            return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
-        except Exception as e:
-            logger.tracelog(e)
+        return self.token_preview(self.id_token)

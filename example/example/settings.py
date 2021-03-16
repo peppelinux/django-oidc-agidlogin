@@ -17,7 +17,7 @@ from . spid_oidc_rp_settings import JWTCONN_RP_CLIENTS
 try:
     from . spid_oidc_rp_settings_private import JWTCONN_RP_CLIENTS as JWTCONN_RP_CLIENTS_UPDATE
     JWTCONN_RP_CLIENTS.update(JWTCONN_RP_CLIENTS_UPDATE)
-except:
+except: # pragma: no cover
     pass
 
 

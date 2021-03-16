@@ -1,6 +1,9 @@
 from django.test import TestCase, Client, RequestFactory
 from django.urls import reverse
 
+from . models import OidcAuthenticationToken
+from . utils import html_json_preview
+
 
 class OidcRpTest(TestCase):
 
@@ -22,3 +25,18 @@ class OidcRpTest(TestCase):
         url = f'{reverse("spid_oidc_rp:spid_oidc_rp_echo_attributes")}'
         res = req.get(url)
         self.assertIn('sando', res.content.decode())
+
+        # test models
+        tokens = OidcAuthenticationToken.objects.first()
+
+        try:
+            tokens.access_token_preview
+        except:
+            # Access token not in JWT format!
+            pass
+
+        tokens.id_token_preview
+
+
+    def test_html_json_preview(self):
+        html_json_preview('{"a" : 34, "b" : 78}')

@@ -25,10 +25,14 @@ class OidcProviderDiscovery(object):
 
         if oidc_op_wk.status_code == 200:
             return oidc_op_wk.json()
-        else:
-            raise Exception(f'Provider Discovery returns {oidc_op_wk.status_code}')
+        else: # pragma: no cover
+            raise Exception(
+                f'Provider Discovery returns {oidc_op_wk.status_code}'
+            )
 
-    def get_jwks_from_jwks_uri(self, jwks_uri, verify=True)->tuple:
+    def get_jwks_from_jwks_uri(self,
+                               jwks_uri:str,
+                               verify:bool=True)->tuple:
         """
             builds jwks objects, importable in a Key Jar
         """
@@ -52,7 +56,7 @@ class OidcUserInfo(object):
         headers = {'Authorization': f'Bearer {access_token}'}
         authz_userinfo = requests.get(provider_conf['userinfo_endpoint'],
                                       headers=headers, verify=verify)
-        if authz_userinfo.status_code != 200:
+        if authz_userinfo.status_code != 200: # pragma: no cover
             logger.error(
                 f'Something went wrong with {state}: {authz_userinfo.content}'
             )
@@ -62,6 +66,6 @@ class OidcUserInfo(object):
                 authz_userinfo = json.loads(authz_userinfo.content.decode())
                 logger.debug(f"Userinfo endpoint result: {authz_userinfo}")
                 return authz_userinfo
-            except Exception as e:
+            except Exception as e: # pragma: no cover
                 logger.error(f'Something went wrong with {state}: {e}')
                 return False
