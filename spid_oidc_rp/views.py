@@ -251,8 +251,8 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         if not user:
             raise PermissionDenied()
 
-        request.session['oidc_rp_user_attrs'] = user_attrs
         login(request, user)
+        request.session['oidc_rp_user_attrs'] = user_attrs
         return HttpResponseRedirect(
             client_conf.get('login_redirect_url') or \
             getattr(settings, 'LOGIN_REDIRECT_URL')

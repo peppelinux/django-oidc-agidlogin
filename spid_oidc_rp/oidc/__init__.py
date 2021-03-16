@@ -3,6 +3,7 @@ import logging
 import requests
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
+from django.utils.translation import gettext as _
 
 
 logger = logging.getLogger(__name__)
@@ -53,10 +54,9 @@ class OidcUserInfo(object):
                                       headers=headers, verify=verify)
         if authz_userinfo.status_code != 200:
             logger.error(
-                f'Something went wrong with {state}: {authz_userinfo.content}')
-            return HttpResponseBadRequest(
-                _('An error occourred while getting user attributes')
+                f'Something went wrong with {state}: {authz_userinfo.content}'
             )
+            return False
         else:
             try:
                 authz_userinfo = json.loads(authz_userinfo.content.decode())
