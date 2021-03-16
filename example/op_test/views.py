@@ -53,7 +53,13 @@ PROVIDER_CONFIG = {
     "authorization_encryption_enc_values_supported": ["A128CBC-HS256","A128GCM","A256CBC-HS512","A256GCM"],
     "request_object_encryption_alg_values_supported": ["A128KW","A256KW"],
     "request_object_encryption_enc_values_supported": ["A128CBC-HS256","A128GCM","A256CBC-HS512","A256GCM"],
-    "claim_types_supported": ["normal"]
+    "claim_types_supported": ["normal"],
+
+    "end_session_endpoint":"https://login.agid.gov.it/session/end",
+    "backchannel_logout_supported": True,
+    "backchannel_logout_session_supported": True,
+    "frontchannel_logout_supported": True,
+    "frontchannel_logout_session_supported":True,
 }
 
 STATE = {}
