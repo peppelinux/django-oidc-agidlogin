@@ -1,4 +1,10 @@
 # spid-django-oidc
+
+![CI build](https://github.com/peppelinux/spid-django-oidc/workflows/spid-django-oidc/badge.svg)
+![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
+[![codecov](https://codecov.io/gh/peppelinux/spid-django-oidc/branch/main/graph/badge.svg)](https://codecov.io/gh/peppelinux/spid-django-oidc)
+![License](https://img.shields.io/badge/python-3.7%20%7C%203.8%20%7C%203.9-blue.svg)
+
 OIDC Relying Party (RP) or OAuth2 Client based on django and [jwtconnect.io](https://jwtconnect.io/),
 specifically built from scratch with [oidcmsg](https://oidcmsg.readthedocs.io/en/latest/)
 and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).

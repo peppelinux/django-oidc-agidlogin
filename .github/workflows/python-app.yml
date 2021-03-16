@@ -55,17 +55,17 @@ jobs:
         coverage run ./manage.py test
         coverage report -m
         # coverage report --fail-under=99
-        # coverage xml
-    #- name: Upload coverage to Codecov
-      #uses: codecov/codecov-action@v1
-      #with:
-        #token: ${{ secrets.CODECOV_TOKEN }}
-        #file: example/coverage.xml
-        #flags: unittests
-        #env_vars: OS,PYTHON
-        #name: codecov-umbrella
-        #fail_ci_if_error: true
-        #path_to_write_report: ./codecov_report.txt
+        coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        file: example/coverage.xml
+        flags: unittests
+        env_vars: OS,PYTHON
+        name: codecov-umbrella
+        fail_ci_if_error: true
+        path_to_write_report: ./codecov_report.txt
     #- name: Bandit Security Scan
       #run: |
         #bandit -r -x tests.py,src/cms/api/tests src/cms/*
