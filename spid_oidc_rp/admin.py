@@ -39,7 +39,7 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
                        'provider_configuration_preview',
                        'created',
                        'modified')
-    exclude = ('issuer_id', 'json', 'provider_configuration', 'jwks')
+    exclude = ('issuer_id', 'data', 'provider_configuration', 'provider_jwks')
     fieldsets = (
         (None,
             {
@@ -78,7 +78,7 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
     )
 
     def json_preview(self, obj):
-        return html_json_preview(obj.json)
+        return html_json_preview(obj.data)
     json_preview.short_description = 'Authentication Request data'
 
     def provider_configuration_preview(self, obj):
@@ -86,5 +86,5 @@ class OidcAuthenticationRequestAdmin(admin.ModelAdmin):
     provider_configuration_preview.short_description = 'provider configuration'
 
     def jwks_preview(self, obj):
-        return html_json_preview(obj.jwks)
+        return html_json_preview(obj.provider_jwks)
     jwks_preview.short_description = 'jwks'

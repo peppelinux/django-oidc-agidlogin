@@ -66,3 +66,8 @@ class OidcAuthenticationToken(models.Model):
     @property
     def id_token_preview(self):
         return self.token_preview(self.id_token)
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.authz_request.successful = True
+        self.authz_request.save()
