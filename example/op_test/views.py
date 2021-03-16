@@ -4,9 +4,11 @@ import urllib
 
 
 from cryptojwt.jwk.jwk import key_from_jwk_dict
+from cryptojwt.jwk.rsa import RSAKey
 from django.http import JsonResponse, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
+from oidcmsg.message import Message
 
 
 logger = logging.getLogger(__name__)
@@ -88,11 +90,41 @@ def authz_request(request):
 
 @csrf_exempt
 def token_request(request):
-    breakpoint()
-    pass
+    logger.debug(f'{request.headers}: {request.POST}')
+
+    id_token = {
+                    "sub": "Microsoft:test-protocollo-2@agid.gov.it",
+                    "nonce": "ITyym7MixGzWnTp4AMFimVk5",
+                    "at_hash": "a_jseUswllpYcJVPYEcj5w",
+                    "sid": "3dd91e80-ec4b-4cca-af44-58dfdd0544cb",
+                    "aud": "2c43a070-425f-4613-859c-d234ec7d71af",
+                    "exp": 1615749924,
+                    "iat": 1615746324,
+                    "iss": ISSUER
+                }
+    jwt_id_token = Message(**id_token)
+    keys = [RSAKey(**JWK_PRIVATE)]
+    signed_jwt_id_token = jwt_id_token.to_jwt(keys, "RS256")
+
+    return JsonResponse(
+        {
+            'access_token': 'sadasd',
+            'id_token': signed_jwt_id_token,
+            'token_type': 'bearer',
+            'expires_in': 3600,
+            'scope': 'openid profile'
+        }
+    )
 
 
 def userinfo_request(request):
-    breakpoint()
-    pass
+    logger.debug(f'{request.headers}: {request.POST}')
+    return JsonResponse(
+        {
+            'sub': 'that-subject',
+            'firstname': 'sando',
+            'lastname': 'kan',
+            'email': 'sando@k.an'
+        }
+    )
 

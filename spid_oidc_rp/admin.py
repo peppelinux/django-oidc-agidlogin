@@ -1,9 +1,12 @@
 import json
+import logging
 
 from django.contrib import admin
 from django.utils.safestring import mark_safe
 
 from . models import OidcAuthenticationRequest, OidcAuthenticationToken
+
+logger = logging.getLogger(__name__)
 
 
 def html_json_preview(value):
@@ -12,18 +15,19 @@ def html_json_preview(value):
     return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
 
 
-class OidcAuthenticationTokenInline(admin.TabularInline):
+class OidcAuthenticationTokenInline(admin.StackedInline):
     model = OidcAuthenticationToken
     extra = 0
     max_num = 1
-    readonly_fields = ('code', 'access_token', 'id_token')
-    fieldsets = (
-        (None,
-            {
-                'fields': ('code', 'access_token', 'id_token')
-            }
-         ),
-    )
+    readonly_fields = ('scope',
+                       'expires_in',
+                       'token_type',
+                       'code',
+                       'access_token',
+                       'id_token',
+                       'access_token_preview',
+                       'id_token_preview')
+
 
 @admin.register(OidcAuthenticationRequest)
 class OidcAuthenticationRequestAdmin(admin.ModelAdmin):

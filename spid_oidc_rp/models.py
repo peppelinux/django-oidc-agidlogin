@@ -1,4 +1,12 @@
+import json
+import logging
+
 from django.db import models
+from django.utils.safestring import mark_safe
+
+from . utils import decode_token, get_issuer_keyjar
+
+logger = logging.getLogger(__name__)
 
 
 class OidcAuthenticationRequest(models.Model):
@@ -19,6 +27,11 @@ class OidcAuthenticationRequest(models.Model):
     def __str__(self):
         return f'{self.client_id} {self.state} to {self.endpoint}'
 
+    def get_provider_keyjar(self):
+        jwks = json.loads(self.jwks)
+        keyjar = get_issuer_keyjar(jwks, self.issuer)
+        return keyjar
+
 
 class OidcAuthenticationToken(models.Model):
     authz_request = models.ForeignKey(OidcAuthenticationRequest,
@@ -36,3 +49,23 @@ class OidcAuthenticationToken(models.Model):
 
     def __str__(self):
         return f'{self.authz_request} {self.code}'
+
+    @property
+    def access_token_preview(self):
+        keyjar = self.authz_request.get_provider_keyjar()
+        try:
+            msg = decode_token(self.access_token, keyjar)
+            dumps = json.dumps(msg, indent=2)
+            return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
+        except Exception as e:
+            logger.tracelog(e)
+
+    @property
+    def id_token_preview(self):
+        keyjar = self.authz_request.get_provider_keyjar()
+        try:
+            msg = decode_token(self.id_token, keyjar)
+            dumps = json.dumps(msg, indent=2)
+            return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
+        except Exception as e:
+            logger.tracelog(e)

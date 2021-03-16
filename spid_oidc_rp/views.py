@@ -207,8 +207,7 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
                 _('Authentication token seems not to be valid.')
             )
 
-        jwks = json.loads(authz.jwks)
-        keyjar = get_issuer_keyjar(jwks, authz.issuer)
+        keyjar = authz.get_provider_keyjar()
 
         if not self.validate_jwt(authz, token_request['access_token'], keyjar):
             pass
@@ -231,7 +230,7 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
 
         authz_token.access_token = token_request['access_token']
         authz_token.id_token = token_request['id_token']
-        authz_token.scope = token_request['scope']
+        authz_token.scope = token_request.get('scope')
         authz_token.token_type = token_request['token_type']
         authz_token.expires_in = token_request['expires_in']
         authz_token.save()
