@@ -52,7 +52,7 @@ Regarding django user management
 ## Installation
 
 ````
-pip install spid-django-oidc
+pip install spid_oidc_rp
 ````
 
 then adapt your project setting file as shown in `example/` project.
