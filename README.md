@@ -96,6 +96,13 @@ cd example
 ./manage.py runserver 0.0.0.0:8888
 ````
 
+Open your web browser and go to your debug server url, eg:
+
+`http://localhost:8888/oidc/rp/begin?issuer_id=op_test`
+
+where `issuer_id` is one of the configured in `JWTCONN_RP_CLIENTS`.
+
+
 ## Settings
 
 Please see `example/example/spid_oidc_rp_settings.py` as example.
@@ -108,10 +115,12 @@ Please see `example/example/spid_oidc_rp_settings.py` as example.
     - `add_ons.pkce`: enable PKCE (rfc7636)
     - `user_attributes_map`:defines how the claims should be mapped the django project User model. you can use a function to do rewrite or create new attributes (feel free to contribute with new processors!)
         ````
-        {
+        (
+         {
             'func': 'spid_oidc_rp.processors.issuer_prefixed_sub',
             'kwargs': {'sep': '__'}
-        },
+         },
+        )
         ````
         Otherwise a simple mapping like this: `('firstname',),`
         Otherwise a multiple OR sequence: `('firstname', 'lastname'),`. This will check for the first occourrence

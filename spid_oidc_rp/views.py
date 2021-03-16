@@ -143,19 +143,23 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         user_map = client_conf['user_attributes_map']
         data = dict()
         for k,v in user_map.items():
-            if type(v) in (list, tuple):
-                for i in v:
+            for i in v:
+                if isinstance(i, str):
                     if i in userinfo:
                         data[k] = userinfo[i]
                         break
-            elif isinstance(v, dict):
-                args = (
-                    userinfo,
-                    client_conf,
-                    authz.__dict__,
-                    v['kwargs']
-                )
-                data[k] = import_string(v['func'])(*args)
+
+                elif isinstance(i, dict):
+                    args = (
+                        userinfo,
+                        client_conf,
+                        authz.__dict__,
+                        i['kwargs']
+                    )
+                    value = import_string(i['func'])(*args)
+                    if value:
+                        data[k] = value
+                        break
         return data
 
     def user_reunification(self, user_attrs: dict, client_conf:dict):
@@ -164,9 +168,12 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         lookup = {field_name: user_attrs[field_name]}
         user = user_model.objects.filter(**lookup)
         if user:
+            logger.info(f'{field_name} matched on user {user}')
             return user.first()
         elif client_conf.get('user_create'):
-            return user_model.objects.create(**user_attrs)
+            user = user_model.objects.create(**user_attrs)
+            logger.info(f'Created new user {user}')
+            return user
 
     def get(self, request, *args, **kwargs):
         """

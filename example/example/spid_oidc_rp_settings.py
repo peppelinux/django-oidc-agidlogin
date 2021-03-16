@@ -10,10 +10,12 @@ JWTCONN_RP_PREFS = {
 
 
 JWTCONN_ATTR_MAP = {
-    'username': {
+    'username': (
+                 {
                     'func': 'spid_oidc_rp.processors.issuer_prefixed_sub',
                     'kwargs': {'sep': '__'}
-                },
+                 },
+                ),
     'first_name': ('firstname',),
     'last_name': ('lastname',),
     'email': ('email',),
