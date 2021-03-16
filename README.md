@@ -114,13 +114,13 @@ where `issuer_id` is one of the configured in `JWTCONN_RP_CLIENTS`.
 
 Please see `example/example/spid_oidc_rp_settings.py` as example.
 
-- `JWTCONN_RP_PREFS`: General information about the RP, default parameters in authz requests like `scope`
-- `JWTCONN_RP_CLIENTS`: All the Clients configured,
-    - `discovery_url`: only usefull if the provider/as doesn't have a standard .`well-known` discovery path
-    - `redirect_uris`: this must match with the `spid_oidc_rp_callback` url defined in your project `urls.py`
-    - `httpc_params`: check if the provider have a valid https certificate
+- `JWTCONN_RP_PREFS`: General informations, default parameters during authentication requests, like the `scope` attribute
+- `JWTCONN_RP_CLIENTS`: All the Clients configured in.
+    - `discovery_url`: only usefull if the OP/AS doesn't have a standard `.well-known` discovery path
+    - `redirect_uris`: this must match with the `spid_oidc_rp_callback` url, defined in your project `urls.py`
+    - `httpc_params`: python requests arguments, by default `verify` that checks if the provider have a valid https certificate
     - `add_ons.pkce`: enable PKCE (rfc7636)
-    - `user_attributes_map`:defines how the claims should be mapped the django project User model. you can use a function to do rewrite or create new attributes (feel free to contribute with new processors!)
+    - `user_attributes_map`: defines how oidc claims should be mapped to User model. You can even use a function to do rewrite or create new attributes (feel free to contribute with new processors in `processors.py`)
         ````
         (
          {
@@ -132,10 +132,10 @@ Please see `example/example/spid_oidc_rp_settings.py` as example.
         Otherwise a simple mapping like this: `('firstname',),`
         Otherwise a multiple OR sequence: `('firstname', 'lastname'),`. This will check for the first occourrence
 
-    - `user_lookup_field`: the django user field where the reunification lookup will use, `('username'),`
+    - `user_lookup_field`: the django user field, where the reunification lookup happens, eg: `('username'),`
     - `user_create`: creates a new user if the reunification lookup fails
-    - `login_redirect_url`: where the user will be redirected when it's finally authenticated
-- `JWTCONN_PKCE_CONF`: function and paramenters to PKCE creation
+    - `login_redirect_url`: where the user will be redirected when finally authenticated
+- `JWTCONN_PKCE_CONF`: function and general paramenters for PKCE creation
 
 
 ## Tests
