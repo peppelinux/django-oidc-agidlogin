@@ -18,7 +18,7 @@ with open(os.path.join(os.path.dirname(__file__), 'requirements.txt')) as requir
 
 setup(
     name="spid_oidc_rp",
-    version='0.2.0',
+    version='0.2.2',
     description="OIDC SPID Relying Party",
     long_description=README,
     long_description_content_type='text/markdown',

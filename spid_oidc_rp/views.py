@@ -258,6 +258,10 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         user_attrs = self.process_user_attributes(
                         userinfo, client_conf, authz
                     )
+        if not user_attrs:
+            _msg = 'No user attributes have been processed'
+            logger.warning(f"{_msg}: {userinfo}")
+            raise PermissionDenied(_msg)
         user = self.user_reunification(user_attrs, client_conf)
         if not user:
             raise PermissionDenied()
