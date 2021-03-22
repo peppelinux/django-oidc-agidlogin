@@ -65,7 +65,9 @@ class OidcAuthenticationToken(models.Model):
         try:
             msg = decode_token(token, keyjar)
             dumps = json.dumps(msg, indent=2)
-            return mark_safe(dumps.replace('\n', '<br>').replace('\s', '&nbsp'))
+            return mark_safe(
+                dumps.replace('\n', '<br>').replace('\s', '&nbsp')
+            )
         except Exception as e:
             logger.error(e)
 

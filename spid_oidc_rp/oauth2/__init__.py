@@ -15,6 +15,7 @@ class OAuth2AuthorizationCodeGrant(object):
     """
     def get_token_endpoint_auth_method(self,
                                        client_conf: dict,
+                                       grant_data:dict = {},
                                        method: str = None):
         method = method or client_conf['client_preferences']['token_endpoint_auth_method'][0]
 
@@ -24,15 +25,14 @@ class OAuth2AuthorizationCodeGrant(object):
                 client_conf['client_id'],
                 client_conf['client_secret']
             )
-            data = {'auth': auth}
-        elif all((method == 'client_secret_post',
-                  'client_token' in client_conf)):
-            data = dict(
-                headers={
-                    'Authorization': f'Bearer {client_conf["client_token"]}'
-                }
-            )
-        return data
+            data = {'auth': auth, 'data': grant_data}
+            return data
+        elif method == 'client_secret_post':
+            grant_data.update({
+                'client_id' : client_conf['client_id'],
+                'client_secret' : client_conf['client_secret']
+            })
+            return grant_data
 
     def access_token_request(self,
                              redirect_uri:str,
@@ -59,11 +59,9 @@ class OAuth2AuthorizationCodeGrant(object):
             grant_data.update({'code_verifier': code_verifier})
 
         issuer_id = issuer_id
-        auth_data = self.get_token_endpoint_auth_method(client_conf)
-        token_req_data = dict(
-            data=grant_data,
+        token_req_data = self.get_token_endpoint_auth_method(
+            client_conf, grant_data
         )
-        token_req_data.update(auth_data)
         logger.debug(f'Access Token Request for {state}: {token_req_data} ')
 
         token_request = requests.post(
