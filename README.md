@@ -18,12 +18,10 @@ and [cryptojwt](https://cryptojwt.readthedocs.io/en/latest/).
 
 ## Introduction
 
-spid-django-oidc enables OIDC Authentication in your django project.
+django-oidc-agidlogin enables OIDC Authentication in your django project.
 
 To date there are many libraries that enable OAuth2 and OIDC in a Django project,
-this project instead born to be lightweight and simple, compliant with
-standards and in line with what defined in [OIDC SPID](https://docs.italia.it/AgID/documenti-in-consultazione/lg-openidconnect-spid-docs/it/bozza/index.html)
-guidelines.
+this project instead born to be lightweight and simple.
 
 What is available today represents the bare essentials to manage an authorization flow and requests
 for token acquisition and user information, processing of attributes and identity reunification functions.
@@ -62,7 +60,7 @@ import `spid_oidc_rp.urls` in your project `urls.py` file.
 ## Example project
 
 ````
-git clone https://github.com/peppelinux/spid-django-oidc.git
+git clone https://github.com/peppelinux/django-oidc-agidlogin.git
 cd spid-django-oidc
 pip install virtualenv
 virtualenv -ppython3 env
