@@ -1,4 +1,4 @@
-# spid-django-oidc
+# django-oidc-agidlogin
 
 ![CI build](https://github.com/peppelinux/spid-django-oidc/workflows/spid-django-oidc/badge.svg)
 ![Python version](https://img.shields.io/badge/license-Apache%202-blue.svg)
