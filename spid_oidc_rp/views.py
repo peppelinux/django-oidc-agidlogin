@@ -172,6 +172,12 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
         user = user_model.objects.filter(**lookup)
         if user: # pragma: no cover
             user = user.first()
+            for k,v in user_attrs.items():
+                if hasattr(user, k):
+                    setattr(user, k, v)
+                else:
+                    logger.warning(f"user {user} doesn't have attribute {k}")
+            user.save()
             logger.info(f'{field_name} matched on user {user}')
             return user
         elif client_conf.get('user_create'):
