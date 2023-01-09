@@ -167,21 +167,29 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
 
     def user_reunification(self, user_attrs: dict, client_conf:dict):
         user_model = get_user_model()
-        field_name = client_conf['user_lookup_field']
-        lookup = {field_name: user_attrs[field_name]}
-        user = user_model.objects.filter(**lookup)
-        if user: # pragma: no cover
-            user = user.first()
-            for k,v in user_attrs.items():
-                if hasattr(user, k):
-                    setattr(user, k, v)
-                else:
-                    logger.warning(f"user {user} doesn't have attribute {k}")
-            user.save()
-            logger.info(f'{field_name} matched on user {user}')
-            return user
-        elif client_conf.get('user_create'):
-            user = user_model.objects.create(**user_attrs)
+        field_names = client_conf['user_lookup_field']
+        for field_name in field_names:
+            if user_attrs.get(field_name, None):
+                lookup = {field_name: user_attrs[field_name]}
+                user = user_model.objects.filter(**lookup)
+                if user: # pragma: no cover
+                    user = user.first()
+                    for k,v in user_attrs.items():
+                        if k == 'username':
+                            continue
+                        if hasattr(user, k):
+                            setattr(user, k, v)
+                        else:
+                            logger.warning(f"user {user} doesn't have attribute {k}")
+                    user.save()
+                    logger.info(f'{field_name} matched on user {user}')
+                    return user
+        if client_conf.get('user_create'):
+            try:
+                user = user_model.objects.create(**user_attrs)
+            except Exception as e:
+                logger.error(f'User creation failed: {e}')
+                return None
             logger.info(f'Created new user {user}')
             return user
 
