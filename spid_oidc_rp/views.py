@@ -267,7 +267,7 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
             return HttpResponseBadRequest(
                 _('UserInfo response seems not to be valid.')
             )
-
+        logger.info(f'user {userinfo["sub"]} has these attributes: {", ".join(userinfo.keys())}')
         # here django user attr mapping
         user_attrs = self.process_user_attributes(
                         userinfo, client_conf, authz
@@ -276,13 +276,14 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
             _msg = 'No user attributes have been processed'
             logger.warning(f"{_msg}: {userinfo}")
             raise PermissionDenied(_msg)
+        logger.info(f'user {userinfo["sub"]} has these processed attributes: {", ".join(user_attrs.keys())}')
         user = self.user_reunification(user_attrs, client_conf)
         if not user:
             raise PermissionDenied()
 
         # authenticate the user
         login(request, user)
-        logger.info(f'{user} has been logged in.')
+        logger.info(f'{user} has been logged using {userinfo["provider"]}, {userinfo["provider_id"]}')
         request.session['oidc_rp_user_attrs'] = user_attrs
         authz_token.user = user
         authz_token.save()
@@ -321,7 +322,10 @@ def oidc_rpinitiated_logout(request):
 
     if not end_session_url:
         logger.warning(f'{authz.issuer_url} does not support end_session_endpoint !')
-        return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+        if settings.LOGOUT_REDIRECT_URL:
+            return HttpResponseRedirect(settings.LOGOUT_REDIRECT_URL)
+        else:
+            return HttpResponseRedirect('/')
     else:
         auth_token = auth_tokens.last()
         url = f'{end_session_url}?id_token_hint={auth_token.id_token}'
