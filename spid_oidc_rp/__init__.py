@@ -16,7 +16,7 @@ class OAuth2BaseView(object):
         if validate_jwt(jwt, key_jar=keyjar):
             return True
         else:
-            logger.error(_msg)
+            logger.debug(_msg)
             return False
 
     def decode_jwt(self, name, authz, jwt, keyjar):
@@ -25,7 +25,7 @@ class OAuth2BaseView(object):
             logger.debug(f"{name}: {decoded_jwt}")
             return decoded_jwt
         except BadSyntax:
-            logger.warning(
+            logger.debug(
                 f"{name} from {authz.issuer} is not in JWT format: {jwt}"
             )
         except Exception as e: # pragma: no cover
