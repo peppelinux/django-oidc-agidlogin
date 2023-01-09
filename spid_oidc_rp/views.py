@@ -283,7 +283,10 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
 
         # authenticate the user
         login(request, user)
-        logger.info(f'{user} has been logged using {userinfo["provider"]}, {userinfo["provider_id"]}')
+        if userinfo.get("provider", None):
+            logger.info(f'{user} has been logged in using {userinfo["provider"]}, {userinfo.get("provider_id", "... ")}.')
+        else:
+            logger.info(f'{user} has been logged in')
         request.session['oidc_rp_user_attrs'] = user_attrs
         authz_token.user = user
         authz_token.save()
