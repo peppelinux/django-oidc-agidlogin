@@ -332,6 +332,9 @@ def oidc_rpinitiated_logout(request):
     else:
         auth_token = auth_tokens.last()
         url = f'{end_session_url}?id_token_hint={auth_token.id_token}'
+        if settings.LOGOUT_REDIRECT_URL:
+            url += f"&post_logout_redirect_uri={settings.LOGOUT_REDIRECT_URL}"
+        
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
         return HttpResponseRedirect(url)
