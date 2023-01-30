@@ -283,7 +283,10 @@ class AgidOidcRpCallbackView(OAuth2BaseView,
 
         # authenticate the user
         login(request, user)
-        logger.info(f'{user} has been logged using {userinfo["provider"]}, {userinfo["provider_id"]}')
+        if userinfo.get("provider", None):
+            logger.info(f'{user} has been logged in using {userinfo["provider"]}, {userinfo.get("provider_id", "... ")}.')
+        else:
+            logger.info(f'{user} has been logged in')
         request.session['oidc_rp_user_attrs'] = user_attrs
         authz_token.user = user
         authz_token.save()
@@ -331,6 +334,9 @@ def oidc_rpinitiated_logout(request):
     else:
         auth_token = auth_tokens.last()
         url = f'{end_session_url}?id_token_hint={auth_token.id_token}'
+        if settings.LOGOUT_REDIRECT_URL:
+            url += f"&post_logout_redirect_uri={settings.LOGOUT_REDIRECT_URL}"
+        
         auth_token.logged_out = timezone.localtime()
         auth_token.save()
         return HttpResponseRedirect(url)
