@@ -307,15 +307,17 @@ def oidc_rpinitiated_logout(request):
     """
         http://localhost:8000/end-session/?id_token_hint=
     """
+    end_session_url = None
     auth_tokens = OidcAuthenticationToken.objects.filter(
                     user=request.user
                     ).filter(
                             Q(logged_out__iexact = '') |
                             Q(logged_out__isnull = True)
                         )
-    authz = auth_tokens.last().authz_request
-    provider_conf = authz.get_provider_configuration()
-    end_session_url = provider_conf.get('end_session_endpoint')
+    if auth_tokens.last():
+        authz = auth_tokens.last().authz_request
+        provider_conf = authz.get_provider_configuration()
+        end_session_url = provider_conf.get('end_session_endpoint')
 
     # first of all on RP side ...
     logout(request)
